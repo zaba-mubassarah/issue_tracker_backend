@@ -1,35 +1,129 @@
 import { v4 as uuid } from "uuid";
-let users = [];
-export const getUsers = (req, res) => {
-  res.send(users);
+import mongoose from "mongoose";
+
+const userSchema = mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  age: {
+    type: Number,
+    required: false,
+  },
+  address: {
+    type: String,
+    required: true,
+  },
+  f_name: {
+    type: String,
+    required: true,
+  },
+  m_name: {
+    type: String,
+    required: true,
+  },
+});
+const userModel = new mongoose.model("User", userSchema);
+
+export const getUsers = async (req, res) => {
+  await userModel
+    .find({}, (err, data) => {
+      if (err) {
+        res.status(500).json({
+          error: "There is an error!",
+        });
+      } else {
+        res.status(200).json({
+          result: data,
+          message: "Success",
+        });
+      }
+    })
+    .clone();
 };
-export const getUserById = (req, res) => {
-  const { id } = req.params;
-  const dataById = users.find((item) => item.id === id);
-  res.send(dataById);
+export const getUserById = async (req, res) => {
+  await userModel
+    .find({ _id: req.params.id }, (err, data) => {
+      if (err) {
+        res.status(500).json({
+          error: "There is an error!",
+        });
+      } else {
+        res.status(200).json({
+          result: data,
+          message: "Success",
+        });
+      }
+    })
+    .clone();
 };
 export const saveUser = (req, res) => {
-  console.log("req,", req);
-  const request = req.body;
-  users.push({ ...request, id: uuid() });
-  res.send(users);
-};
-
-export const deleteUser = (req, res) => {
-  const { id } = req.params;
-
-  users = users.filter((item) => {
-    return item.id !== id;
+  const newUser = new userModel(req.body);
+  newUser.save((err) => {
+    if (err) {
+      res.status(500).json({
+        error: "There is an error!",
+      });
+    } else {
+      res.status(200).json({
+        message: "User is inserted successfully",
+      });
+    }
   });
-
-  res.send(`users of id ${id} is deleted`);
+};
+export const insertManyUser = async (req, res) => {
+  await userModel.insertMany(req.body, (err) => {
+    if (err) {
+      res.status(500).json({
+        error: "There is an error!",
+      });
+    } else {
+      res.status(200).json({
+        message: "Users are inserted successfully",
+      });
+    }
+  });
+};
+export const deleteUser = async (req, res) => {
+  await userModel
+    .deleteOne({ _id: req.params.id }, (err, data) => {
+      if (err) {
+        res.status(500).json({
+          error: "There is an error!",
+        });
+      } else {
+        res.status(200).json({
+          message: "User deleted succesfully",
+        });
+      }
+    })
+    .clone();
 };
 
-export const updateUser = (req, res) => {
-  const user = users.find((item) => item.id === req.params.id);
-  user.name = req.body.name;
-  user.f_name = req.body.f_name;
-  user.m_name = req.body.m_name;
-
-  res.send(users);
+export const updateUser = async (req, res) => {
+  await userModel
+    .updateOne(
+      { _id: req.params.id },
+      {
+        $set: {
+          name: req.body.name,
+          age: req.body.age,
+          address: req.body.address,
+          f_name: req.body.f_name,
+          m_name: req.body.m_name,
+        },
+      },
+      (err) => {
+        if (err) {
+          res.status(500).json({
+            error: "There is an error!",
+          });
+        } else {
+          res.status(200).json({
+            message: "Users are updated successfully",
+          });
+        }
+      }
+    )
+    .clone();
 };
