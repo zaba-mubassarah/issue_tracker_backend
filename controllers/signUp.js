@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+
 const signUpSchema = mongoose.Schema({
   name: {
     type: String,

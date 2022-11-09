@@ -7,13 +7,13 @@ import {
   deleteIssue,
   updateIssue,
 } from "../controllers/issues.js";
-
+import { authCheck } from "../middlewares/authCheck.js";
 const router = express.Router();
 
-router.get("/", getIssues);
-router.get("/:id", getIssuesById);
-router.post("/", saveIssues);
-router.post("/all", insertManyIssue);
-router.delete("/:id", deleteIssue);
-router.put("/:id", updateIssue);
+router.get("/", authCheck, getIssues);
+router.get("/:id", authCheck, getIssuesById);
+router.post("/", authCheck, saveIssues);
+router.post("/all", authCheck, insertManyIssue);
+router.delete("/:id", authCheck, deleteIssue);
+router.put("/:id", authCheck, updateIssue);
 export default router;

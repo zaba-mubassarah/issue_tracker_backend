@@ -57,7 +57,7 @@ export const loginRequest = async (req, res) => {
 
       password: req.body.password,
     });
-    await newLogin.save();
+
     res.status(200).json({
       message: "login successful",
     });
