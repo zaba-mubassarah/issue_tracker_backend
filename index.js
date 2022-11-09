@@ -12,9 +12,7 @@ import cors from "cors";
 
 const PORT = 5000;
 app.use(bodyParser.json());
-app.listen(process.env.PORT, () => {
-  console.log("sdsds");
-});
+
 mongoose
   .connect("mongodb://localhost/mydb", {
     useNewUrlParser: true,
@@ -27,9 +25,6 @@ app.use("/issues", cors(), issueRoutes);
 app.use("/users", cors(), usersRoute);
 app.use("/", cors(), signUpRoutes);
 
-// app.get("/", (req, res) => {
-//   res.send("Welcome to the backend world!");
-// });
 app.listen(PORT, () =>
   console.log(`Server running on port: http://localhost:${PORT}`)
 );
