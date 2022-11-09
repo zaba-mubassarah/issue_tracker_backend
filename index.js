@@ -12,6 +12,9 @@ import cors from "cors";
 
 const PORT = 5000;
 app.use(bodyParser.json());
+app.listen(process.env.PORT, () => {
+  console.log("sdsds");
+});
 mongoose
   .connect("mongodb://localhost/mydb", {
     useNewUrlParser: true,
