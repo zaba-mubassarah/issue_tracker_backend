@@ -9,6 +9,9 @@ const dataSchema = mongoose.Schema({
   category_id: {
     type: String,
   },
+  category_data: {
+    type: Object,
+  },
 });
 const dataModel = new mongoose.model("ProductSubCategory", dataSchema);
 
@@ -45,9 +48,6 @@ export const getProductSubCategoryId = async (req, res) => {
     .clone();
 };
 export const saveProductSubCategory = async (req, res) => {
-  const newSubCategory = new dataModel(req.body);
-  console.log("newSubCategory", newSubCategory);
-
   if (req.body.category_id.length != 24) {
     res.status(500).json({
       error: "id must be 24 character",
@@ -56,6 +56,14 @@ export const saveProductSubCategory = async (req, res) => {
     await productCategoryModel
       .findById(req.body.category_id)
       .then((response) => {
+        console.log("response sd", response);
+        let saveData = {
+          ...req.body,
+          category_data: response,
+        };
+
+        const newSubCategory = new dataModel(saveData);
+
         if (response != null) {
           newSubCategory.save((err) => {
             if (err) {
