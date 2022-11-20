@@ -1,27 +1,25 @@
 import { v4 as uuid } from "uuid";
 import mongoose from "mongoose";
 
-const userSchema = mongoose.Schema({
-  name: {
+const productSchema = mongoose.Schema({
+  title: {
     type: String,
   },
-  age: {
-    type: Number,
-  },
-  address: {
+  category: {
     type: String,
   },
-  f_name: {
+  sub_category: {
     type: String,
   },
-  m_name: {
+  amount: {
     type: String,
   },
 });
-const userModel = new mongoose.model("User", userSchema);
+const productModel = new mongoose.model("Product", productSchema);
 
-export const getUsers = async (req, res) => {
-  await userModel
+export const getProducts = async (req, res) => {
+  console.log("dfdfdf");
+  await productModel
     .find({}, (err, data) => {
       if (err) {
         res.status(500).json({
@@ -36,8 +34,8 @@ export const getUsers = async (req, res) => {
     })
     .clone();
 };
-export const getUserById = async (req, res) => {
-  await userModel
+export const getProductById = async (req, res) => {
+  await productModel
     .find({ _id: req.params.id }, (err, data) => {
       if (err) {
         res.status(500).json({
@@ -52,35 +50,36 @@ export const getUserById = async (req, res) => {
     })
     .clone();
 };
-export const saveUser = (req, res) => {
-  const newUser = new userModel(req.body);
-  newUser.save((err) => {
+export const saveProduct = (req, res) => {
+  console.log("req from postman", req);
+  const productUser = new productModel(req.body);
+  productUser.save((err) => {
+    if (err) {
+      res.status(500).json({
+        error: "There is an error to insert!",
+      });
+    } else {
+      res.status(200).json({
+        message: "Product is inserted successfully",
+      });
+    }
+  });
+};
+export const insertManyProduct = async (req, res) => {
+  await productModel.insertMany(req.body, (err) => {
     if (err) {
       res.status(500).json({
         error: "There is an error!",
       });
     } else {
       res.status(200).json({
-        message: "User is inserted successfully",
+        message: "Product are inserted successfully",
       });
     }
   });
 };
-export const insertManyUser = async (req, res) => {
-  await userModel.insertMany(req.body, (err) => {
-    if (err) {
-      res.status(500).json({
-        error: "There is an error!",
-      });
-    } else {
-      res.status(200).json({
-        message: "Users are inserted successfully",
-      });
-    }
-  });
-};
-export const deleteUser = async (req, res) => {
-  await userModel
+export const deleteProduct = async (req, res) => {
+  await productModel
     .deleteOne({ _id: req.params.id }, (err, data) => {
       if (err) {
         res.status(500).json({
@@ -88,24 +87,23 @@ export const deleteUser = async (req, res) => {
         });
       } else {
         res.status(200).json({
-          message: "User deleted succesfully",
+          message: "Product deleted succesfully",
         });
       }
     })
     .clone();
 };
 
-export const updateUser = async (req, res) => {
-  await userModel
+export const updateProduct = async (req, res) => {
+  await productModel
     .updateOne(
       { _id: req.params.id },
       {
         $set: {
-          name: req.body.name,
-          age: req.body.age,
-          address: req.body.address,
-          f_name: req.body.f_name,
-          m_name: req.body.m_name,
+          title: req.body.title,
+          category: req.body.category,
+          sub_category: req.body.sub_category,
+          amount: req.body.amount,
         },
       },
       (err) => {
@@ -115,7 +113,7 @@ export const updateUser = async (req, res) => {
           });
         } else {
           res.status(200).json({
-            message: "Users are updated successfully",
+            message: "Product are updated successfully",
           });
         }
       }

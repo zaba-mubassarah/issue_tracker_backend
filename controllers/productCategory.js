@@ -1,27 +1,18 @@
 import { v4 as uuid } from "uuid";
 import mongoose from "mongoose";
 
-const userSchema = mongoose.Schema({
-  name: {
-    type: String,
-  },
-  age: {
-    type: Number,
-  },
-  address: {
-    type: String,
-  },
-  f_name: {
-    type: String,
-  },
-  m_name: {
+const productSchema = mongoose.Schema({
+  title: {
     type: String,
   },
 });
-const userModel = new mongoose.model("User", userSchema);
+export const productCategoryModel = new mongoose.model(
+  "ProductCategory",
+  productSchema
+);
 
-export const getUsers = async (req, res) => {
-  await userModel
+export const getProductCategory = async (req, res) => {
+  await productCategoryModel
     .find({}, (err, data) => {
       if (err) {
         res.status(500).json({
@@ -36,8 +27,8 @@ export const getUsers = async (req, res) => {
     })
     .clone();
 };
-export const getUserById = async (req, res) => {
-  await userModel
+export const getProductCategoryId = async (req, res) => {
+  await productCategoryModel
     .find({ _id: req.params.id }, (err, data) => {
       if (err) {
         res.status(500).json({
@@ -52,35 +43,35 @@ export const getUserById = async (req, res) => {
     })
     .clone();
 };
-export const saveUser = (req, res) => {
-  const newUser = new userModel(req.body);
-  newUser.save((err) => {
+export const saveProductCategory = (req, res) => {
+  const newCategory = new productCategoryModel(req.body);
+  newCategory.save((err) => {
+    if (err) {
+      res.status(500).json({
+        error: "There is an error to insert!",
+      });
+    } else {
+      res.status(200).json({
+        message: "Category is inserted successfully",
+      });
+    }
+  });
+};
+export const insertManyProductCategory = async (req, res) => {
+  await productCategoryModel.insertMany(req.body, (err) => {
     if (err) {
       res.status(500).json({
         error: "There is an error!",
       });
     } else {
       res.status(200).json({
-        message: "User is inserted successfully",
+        message: "Category are inserted successfully",
       });
     }
   });
 };
-export const insertManyUser = async (req, res) => {
-  await userModel.insertMany(req.body, (err) => {
-    if (err) {
-      res.status(500).json({
-        error: "There is an error!",
-      });
-    } else {
-      res.status(200).json({
-        message: "Users are inserted successfully",
-      });
-    }
-  });
-};
-export const deleteUser = async (req, res) => {
-  await userModel
+export const deleteProductCategory = async (req, res) => {
+  await productCategoryModel
     .deleteOne({ _id: req.params.id }, (err, data) => {
       if (err) {
         res.status(500).json({
@@ -88,24 +79,20 @@ export const deleteUser = async (req, res) => {
         });
       } else {
         res.status(200).json({
-          message: "User deleted succesfully",
+          message: "Category deleted succesfully",
         });
       }
     })
     .clone();
 };
 
-export const updateUser = async (req, res) => {
-  await userModel
+export const updateProductCategory = async (req, res) => {
+  await productCategoryModel
     .updateOne(
       { _id: req.params.id },
       {
         $set: {
-          name: req.body.name,
-          age: req.body.age,
-          address: req.body.address,
-          f_name: req.body.f_name,
-          m_name: req.body.m_name,
+          title: req.body.title,
         },
       },
       (err) => {
@@ -115,7 +102,7 @@ export const updateUser = async (req, res) => {
           });
         } else {
           res.status(200).json({
-            message: "Users are updated successfully",
+            message: "Category are updated successfully",
           });
         }
       }
